@@ -1,13 +1,9 @@
-INSERT INTO employee (first_name, last_name, manager_id, role_id)
+INSERT INTO department (name)
 VALUES  
-("Ross", "Geller", null, 1),
-("Rachel", "Green", 1, 2),
-("Chandler", "Bing", null, 3),
-("Joey", "Tribbiani", 2, 4),
-("Monica", "Geller", null, 5),
-("Phoebe", "Buffay", 3, 6),
-("Richard", "Burke", null, 7),
-("Janice", "Hosenstein", 4, 8);
+("Sales"),
+("Engineering"),
+("Finance"),
+("Legal");
 
 INSERT INTO role (title, salary, department_id)
 VALUES  
@@ -20,11 +16,16 @@ VALUES
 ("Legal Team Lead", 250000, 4),
 ("Lawyer", 190000, 4);
 
--- Sales 1, Engineering 2, Finance 3, Legal 4
-
-INSERT INTO department (name)
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES  
-("Engineering"),
-("Finance"),
-("Legal"),
-("Sales");
+("Ross", "Geller", 1, null),
+("Rachel", "Green", 2, 1),
+("Chandler", "Bing", 3, null),
+("Joey", "Tribbiani",4, 3),
+("Monica", "Geller", 5, null),
+("Phoebe", "Buffay", 6, 5),
+("Richard", "Burke", 7, null),
+("Janice", "Hosenstein", 8, 7);
+
+
+
