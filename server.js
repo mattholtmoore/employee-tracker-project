@@ -9,11 +9,13 @@ const db = mysql.createConnection(
     password: '',
     database: 'employees'
   },
-  `Connected to the employees database!`
+  `You are now connected to the employees database!`
 );
 
+// 
 const init = () => {
   inquirer.prompt([
+
     {
       type: 'list',
       message: 'What would you like to do?',
@@ -22,17 +24,17 @@ const init = () => {
         'View All Employees',
         'View All Roles',
         'View All Departments',
-        'View All Employees By Manager',
-        'View All Employees By Department',
+        // 'View All Employees By Manager',
+        // 'View All Employees By Department',
         'Add Employee',
         'Add Role',
         'Add Department',
-        'Remove Employee',
-        'Remove Role',
-        'Remove Department',
+        // 'Remove Employee',
+        // 'Remove Role',
+        // 'Remove Department',
         'Update Employee Role',
-        'Update Employee Manager',
-        'View Total Utilized Budget By Department',
+        // 'Update Employee Manager',
+        // 'View Total Utilized Budget By Department',
         'Exit'
       ]
     }
@@ -60,22 +62,8 @@ const init = () => {
           });
           break;
         }
-        case 'View All Employees By Manager': {
-          db.query('SELECT manager FROM employee', (err, result) => {
-            console.table(result);
-            init();
-          });
-          break;
-        }
-        case 'View All Employees By Department': {
-          db.query('SELECT department FROM employee', (err, result) => {
-            console.table(result);
-            init();
-          });
-          break;
-        }
         case 'Add Employee': {
-         addEmployee();
+          addEmployee();
           break;
         }
         case 'Add Role': {
@@ -86,91 +74,52 @@ const init = () => {
           addDepartment();
           break;
         }
-        case 'Remove Employee': {
-          db.query('DELETE', (err, result) => {
-            console.table(result);
-            init();
-          });
-          break;
-        }
-        case 'Remove Role': {
-          db.query('DELETE', (err, result) => {
-            console.table(result);
-            init();
-          });
-          break;
-        }
-        case 'Remove Department': {
-          db.query('DELETE', (err, result) => {
-            console.table(result);
-            init();
-          });
-          break;
-        }
         case 'Update Employee Role': {
-          db.query('UPDATE', (err, result) => {
-            console.table(result);
-            init();
-          });
-          break;
-        }
-        case 'Update Employee Manager': {
-          db.query('UPDATE', (err, result) => {
-            console.table(result);
-            init();
-          });
-          break;
-        }
-        case 'View Total Utilized Budget By Department': {
-          db.query('SUM', (err, result) => {
-            console.table(result);
-            init();
-          });
+         updateEmployee();
           break;
         }
         default: return process.exit()
       }
     });
-  };
-  
-  const addDepartment = () => {
-    inquirer
-      .prompt([
-        {
-          type: 'input',
-          message: 'What is the name of the department?',
-          name: 'name',
-        },
-       
-      ])
-      .then((answers) => {
-        const { name } = answers;
-  
-        db.query(`INSERT INTO department (name) VALUES ("${name}");`)
-  
-        init();
-      })
-  };
+};
+
+const addDepartment = () => {
+  inquirer
+    .prompt([
+      {
+        type: 'input',
+        message: 'What is the name of the department?',
+        name: 'name',
+      },
+    ])
+    .then((answers) => {
+      const { name } = answers;
+      db.query(`INSERT INTO department (name) VALUES ("${name}");`)
+      init();
+    })
+};
 
 const addRole = () => {
   inquirer
     .prompt([
       {
+        type: 'input',
         message: 'What is the title of the role?',
         name: 'title',
       },
       {
+        type: 'input',
         message: 'What is the salary of the role?',
         name: 'salary',
       },
       {
+        type: 'input',
         message: 'Which department does the role belong to?',
         name: 'department_id',
       },
     ])
     .then((answers) => {
       const { title, salary, department_id } = answers;
-
       db.query(`INSERT INTO role (title, salary, department_id) VALUES ("${title}", ${salary}, ${department_id});`)
 
       init();
@@ -203,13 +152,32 @@ const addEmployee = () => {
     ])
     .then((answers) => {
       const { first_name, last_name, role_id, manager_id } = answers;
-
       db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${first_name}", "${last_name}", ${role_id}, ${manager_id} );`)
 
       init();
     })
 };
 
+const updateEmployee = () => {
+  inquirer
+    .prompt([
+      {
+        type: 'input',
+        message: 'Which employee\'s role do you want to update?',
+        name: 'first_name',
+      },
+      {
+        type: 'input',
+        message: 'Which role do you want to assign the selected employee?',
+        name: 'role_id',
+      },
+  
+    ])
+    .then((answers) => {
+      const { first_name, last_name, role_id, manager_id } = answers;
+      db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${first_name}", "${last_name}", ${role_id}, ${manager_id} );`)
 
-
+      init();
+    })
+};
 init();

@@ -27,5 +27,3 @@ VALUES
 ("Richard", "Burke", 7, null),
 ("Janice", "Hosenstein", 8, 7);
 
-
-
