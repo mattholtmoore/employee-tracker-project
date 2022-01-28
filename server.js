@@ -7,15 +7,13 @@ const db = mysql.createConnection(
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'employees'
+    database: 'employee_db'
   },
   `You are now connected to the employees database!`
 );
 
-// 
 const init = () => {
   inquirer.prompt([
-
     {
       type: 'list',
       message: 'What would you like to do?',
@@ -32,7 +30,7 @@ const init = () => {
         // 'Remove Employee',
         // 'Remove Role',
         // 'Remove Department',
-        'Update Employee Role',
+        // 'Update Employee Role',
         // 'Update Employee Manager',
         // 'View Total Utilized Budget By Department',
         'Exit'
@@ -42,7 +40,7 @@ const init = () => {
     .then(answer => {
       switch (answer.action) {
         case 'View All Employees': {
-          db.query('SELECT * FROM employee', (err, result) => {
+          db.query(`SELECT * FROM employee`, (err, result) => {
             console.table(result);
             init();
           });
@@ -74,27 +72,46 @@ const init = () => {
           addDepartment();
           break;
         }
-        case 'Update Employee Role': {
-         updateEmployee();
-          break;
-        }
         default: return process.exit()
+        // case 'Update Employee Role': {
+        //   updateEmployeeRole();
+        //   break;
+        // }
       }
     });
 };
 
-const addDepartment = () => {
+const addEmployee = () => {
   inquirer
     .prompt([
       {
         type: 'input',
-        message: 'What is the name of the department?',
-        name: 'name',
+        message: 'What is the employee\'s first name?',
+        name: 'first_name',
+      },
+      {
+        type: 'input',
+        message: 'What is the employee\'s last name?',
+        name: 'last_name',
+      },
+      {
+        type: 'input',
+        message: 'What is the employee\'s role?',
+        name: 'role_id',
+      },
+      {
+        type: 'input',
+        message: 'Who is the employee\'s manager?',
+        name: 'manager_id',
       },
     ])
     .then((answers) => {
-      const { name } = answers;
-      db.query(`INSERT INTO department (name) VALUES ("${name}");`)
+      const { first_name, last_name, role_id, manager_id } = answers;
+      db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id ) VALUES ('${first_name}', '${last_name}', '${role_id}', '${manager_id}')`,
+        (err, result) => {
+          if (result) console.table(result)
+        });
+
       init();
     })
 };
@@ -126,58 +143,48 @@ const addRole = () => {
     })
 };
 
-const addEmployee = () => {
+const addDepartment = () => {
   inquirer
     .prompt([
       {
         type: 'input',
-        message: 'What is the employee\'s first name?',
-        name: 'first_name',
-      },
-      {
-        type: 'input',
-        message: 'What is the employee\'s last name?',
-        name: 'last_name',
-      },
-      {
-        type: 'input',
-        message: 'What is the employee\'s role?',
-        name: 'role_id',
-      },
-      {
-        type: 'input',
-        message: 'Who is the employee\'s manager?',
-        name: 'manager_id',
+        message: 'What is the name of the department?',
+        name: 'name',
       },
     ])
     .then((answers) => {
-      const { first_name, last_name, role_id, manager_id } = answers;
-      db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${first_name}", "${last_name}", ${role_id}, ${manager_id} );`)
+      const { name } = answers;
+      db.query(`INSERT INTO department (name) VALUES ("${name}");`)
 
       init();
     })
 };
 
-const updateEmployee = () => {
-  inquirer
-    .prompt([
-      {
-        type: 'input',
-        message: 'Which employee\'s role do you want to update?',
-        name: 'first_name',
-      },
-      {
-        type: 'input',
-        message: 'Which role do you want to assign the selected employee?',
-        name: 'role_id',
-      },
-  
-    ])
-    .then((answers) => {
-      const { first_name, last_name, role_id, manager_id } = answers;
-      db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${first_name}", "${last_name}", ${role_id}, ${manager_id} );`)
+// const updateEmployeeRole = () => {
+//   inquirer
+//     .prompt([
+//       {
+//         type: 'rawlist',
+//         message: 'Which employee\'s role do you want to update?',
+//         name: 'id',
+//         choices: employees
+//       },
+//       {
+//         type: 'rawlist',
+//         message: 'Which role do you want to assign the selected employee?',
+//         name: 'role_id',
+//         choices
+//       },
 
-      init();
-    })
-};
+//     ])
+//     .then(({ id, role_id }) => {
+//       db.query(`UPDATE employee SET role_id = ? WHERE `, answers,
+//         (err, result) => {
+//           if (result) console.log('Employee has been updated!')
+//         });
+
+//       init();
+//     })
+// };
+
 init();
